@@ -31,3 +31,23 @@ svgContainer.append("text").attr("x", 10)
                            .attr("font-size", "30px")
                            .text("Points");
                            
+//draw some lines
+//single line
+svgContainer.append("line").attr("x1",10)
+                           .attr("y1",200)
+                           .attr("x2",50)
+                           .attr("y2",300)
+                           .attr("stroke","hsl(0,100%,50%)")
+                           .attr("stroke-width",2);
+//polyline
+var points = [[70,200],[80,300],[100,200],[130,300],[170,200],[220,300],[280,200]];
+svgContainer.append("polyline").attr("points",points)
+                               .attr("stroke","hsl(120,100%,50%)")
+                               .attr("stroke-width",2)
+                               .attr("fill", "none");
+
+//label for the lines
+svgContainer.append("text").attr("x", 10)
+                           .attr("y", 160)
+                           .attr("font-size", "30px")
+                           .text("Lines");
