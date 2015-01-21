@@ -3,12 +3,6 @@
 var svgContainer = d3.select("body").append("svg")
                                     .attr("width", 1000)
                                     .attr("height", 500);
-                         
-var points = [[50,50],[60,170],[150,100],[70,10],[70,30]];
-
-/*var poly = svgContainer.append("polygon")
-                       .attr("fill", "hsl(240,100%,50%)")
-                       .attr("points", points);*/
 
 //draw some points of different sizes
 var x = 10;
@@ -51,3 +45,25 @@ svgContainer.append("text").attr("x", 10)
                            .attr("y", 160)
                            .attr("font-size", "30px")
                            .text("Lines");
+
+//draw some polygons
+//triangle
+var triPoints = [[10,400],[110,400],[60,500]];
+svgContainer.append("polygon").attr("fill", "hsl(120,100%,50%)")
+                              .attr("points", triPoints);
+//rectangle
+var rectPoints = [[130,400],[270,400],[270,500],[130,500]];
+svgContainer.append("polygon").attr("fill", "hsl(240,100%,50%)")
+                              .attr("points", rectPoints);
+
+//larger polygon
+var polyPoints = [[300,350],[375,375],[450,350],[525,275],[600,375],[675,425],[600,500],
+                  [575,420],[500,425],[420,500],[340,460]];
+svgContainer.append("polygon").attr("fill", "hsl(0,100%,50%)")
+                              .attr("points", polyPoints);
+
+//label for polygons
+svgContainer.append("text").attr("x", 10)
+                           .attr("y", 360)
+                           .attr("font-size", "30px")
+                           .text("Polygons");
