@@ -1,6 +1,7 @@
 
-GRID_SIZE = 50
-grid = []
+GRID_SIZE = 50;
+grid = [];
+UPDATE_SPEED = 1000;
 
 // rules for cell life/death
 // live if 2 or 3 neighbours, die otherwise
@@ -29,6 +30,7 @@ for (var i = 0; i < GRID_SIZE; i++) {
 // draw the grid
 drawGridlines();
 redrawGrid();
+setTimeout(run, UPDATE_SPEED);
 
 // draws the girdlines
 function drawGridlines() {
@@ -52,6 +54,7 @@ function drawGridlines() {
 
 // draws the blue/white squares into the grid, blue for alive white for dead
 function redrawGrid() {
+    svgContainer.select("#bottom").selectAll("rect").remove();
     for (var i = 0; i < GRID_SIZE; i++) {
         for (var j = 0; j < GRID_SIZE; j++) {
             svgContainer.select("#bottom").append("rect").attr("x", 10 + j * 10)
@@ -98,7 +101,12 @@ function calculateLife(y, x) {
     }
 }
 
-
+// update the grid every 1 second
+function run() {
+    setTimeout(run, UPDATE_SPEED);
+    nextGeneration();
+    redrawGrid();
+}
 
 
 
