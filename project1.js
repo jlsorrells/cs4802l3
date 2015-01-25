@@ -30,7 +30,7 @@ for (var i = 0; i < GRID_SIZE; i++) {
 
 // start doing things
 drawGridlines();
-redrawGrid();
+drawGrid();
 running = setInterval(run, UPDATE_SPEED);
 
 // draws the girdlines
@@ -65,9 +65,9 @@ function drawGridlines() {
                                .on("click", pause);
 }
 
-// draws the blue/white squares into the grid, blue for alive white for dead
-function redrawGrid() {
-    svgContainer.select("#bottom").selectAll("rect").remove();
+// draws the grid for the first time
+function drawGrid() {
+
     for (var i = 0; i < GRID_SIZE; i++) {
         for (var j = 0; j < GRID_SIZE; j++) {
             svgContainer.select("#bottom").append("rect").attr("x", 10 + j * 10)
@@ -77,6 +77,17 @@ function redrawGrid() {
                                                          .attr("fill", "hsl(240,100%," + (100 - 50 * grid[i][j]) + "%)");
         }
     }
+}
+
+// updates existing gridcells
+function redrawGrid() { 
+    // update the color of each cell
+    svgContainer.select("#bottom").selectAll("rect").each(
+        function () {
+            this.setAttribute("fill", "hsl(240,100%," + 
+            (100 - 50 * grid[this.getAttribute("y") / 10 - 1][this.getAttribute("x") / 10 - 1]) + "%)");
+        });
+        
     svgContainer.select("#gen_counter").text("Generations: " + generations);
 }
 
