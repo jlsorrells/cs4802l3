@@ -28,7 +28,7 @@ for (var i = 0; i < GRID_SIZE; i++) {
     grid.push(temp);
 }
 
-// draw the grid
+// start doing things
 drawGridlines();
 redrawGrid();
 running = setInterval(run, UPDATE_SPEED);
@@ -57,6 +57,12 @@ function drawGridlines() {
                                .attr("font-size", 20)
                                .attr("id", "gen_counter")
                                .text("Generations: 0");
+    svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
+                               .attr("y", 80)
+                               .attr("font-size", 20)
+                               .attr("id", "pause_button")
+                               .text("Pause")
+                               .on("click", pause);
 }
 
 // draws the blue/white squares into the grid, blue for alive white for dead
@@ -97,7 +103,7 @@ function calculateLife(y, x) {
             continue;
         }
         for (var j = -1; j < 2; j++) {
-            if (x+j < 0 || x+j >= GRID_SIZE || (i == 0 && j == 0)) {
+            if (x+j < 0 || x+j >= GRID_SIZE || (i === 0 && j === 0)) {
                 continue;
             }
             neighbours += grid[y + i][x + j];
@@ -116,7 +122,17 @@ function run() {
     redrawGrid();
 }
 
-
+function pause() {
+    if (running !== null) {
+        clearInterval(running);
+        running = null;
+        svgContainer.select("#pause_button").text("Unpause");
+    } else {
+        run();
+        running = setInterval(run, UPDATE_SPEED);
+        svgContainer.select("#pause_button").text("Pause");
+    }
+}
 
 
 
