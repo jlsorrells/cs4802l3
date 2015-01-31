@@ -1,7 +1,7 @@
 
 GRID_SIZE = 50;
 grid = [];
-UPDATE_SPEED = 1000;
+updateSpeed = 1000;
 generations = 0;
 
 // rules for cell life/death
@@ -31,9 +31,9 @@ for (var i = 0; i < GRID_SIZE; i++) {
 // start doing things
 drawGridlines();
 drawGrid();
-running = setInterval(run, UPDATE_SPEED);
+running = setInterval(run, updateSpeed);
 
-// draws the girdlines
+// draws the girdlines and other static UI elements
 function drawGridlines() {
     for (var i = 0; i <= GRID_SIZE; i++) {
         // vertical lines
@@ -57,12 +57,33 @@ function drawGridlines() {
                                .attr("font-size", 20)
                                .attr("id", "gen_counter")
                                .text("Generations: 0");
+    svgContainer.append("rect").attr("x", 40 + GRID_SIZE * 10)
+                               .attr("y", 63)
+                               .attr("width", 100)
+                               .attr("height", 22)
+                               .attr("id", "pause_rect")
+                               .attr("fill", "hsl(0,0%,80%")
+                               .attr("stroke", "black")
+                               .attr("stroke-width", 2)
+                               .on("click", pause);
     svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 80)
                                .attr("font-size", 20)
                                .attr("id", "pause_button")
                                .text("Pause")
                                .on("click", pause);
+    svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
+                               .attr("y", 120)
+                               .attr("font-size", 20)
+                               .attr("id", "update_label")
+                               .text("Update Speed (ms)")
+                               .on("click", pause);
+    svgContainer.append("foreignObject").attr("x", 40 + GRID_SIZE * 10)
+                                        .attr("y", 130)
+                                        .attr("width", 100)
+                                        .attr("height", 25)
+                                        .html("<input type=\"number\" min=\"0\" max=\"2000\" step=\"10\" value=\"500\" id=\"updateSpeedBox\" oninput=\"setUpdateTime(this.value)\">");
+
 }
 
 // draws the grid for the first time
@@ -139,11 +160,28 @@ function pause() {
         running = null;
         svgContainer.select("#pause_button").text("Unpause");
     } else {
-        run();
-        running = setInterval(run, UPDATE_SPEED);
+        //run();
+        running = setInterval(run, updateSpeed);
         svgContainer.select("#pause_button").text("Pause");
     }
 }
+
+function setUpdateTime(timeStep) {
+    // 2000 is max allowed value
+    if (timeStep > 2000) {
+        //d3.select("#updateSpeedBox").attr("value", 2000); // doesn't work?
+        d3.select("#updateSpeedBox")[0][0].value = 2000;
+        timeStep = 2000;
+    }
+    updateSpeed = timeStep;
+    // if running, pause and unpause to start using the new value
+    if (running !== null) {
+        pause();
+        pause();
+    }
+}
+
+
 
 
 
