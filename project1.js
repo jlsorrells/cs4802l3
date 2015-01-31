@@ -1,14 +1,16 @@
 
-GRID_SIZE = 50;
-grid = [];
-updateSpeed = 1000;
-generations = 0;
+"use strict"
+
+var GRID_SIZE = 50;
+var grid = [];
+var updateSpeed = 1000;
+var generations = 0;
 
 // rules for cell life/death
 // live if 2 or 3 neighbours, die otherwise
-liveCell = [false, false, true, true, false, false, false, false, false, false];
+var liveCell = [false, false, true, true, false, false, false, false, false, false];
 // born if 3 neighbours
-deadCell = [false, false, false, true, false, false, false, false, false, false];
+var deadCell = [false, false, false, true, false, false, false, false, false, false];
 
 //Make an SVG Container
 var svgContainer = d3.select("body").append("svg")
@@ -21,7 +23,7 @@ svgContainer.append("g").attr("id", "top");
 
 // initialize the grid randomly
 for (var i = 0; i < GRID_SIZE; i++) {
-    temp = []
+    var temp = []
     for (var j = 0; j < GRID_SIZE; j++) {
         temp.push(Math.random() > 0.5);
     }
@@ -31,7 +33,7 @@ for (var i = 0; i < GRID_SIZE; i++) {
 // start doing things
 drawGridlines();
 drawGrid();
-running = setInterval(run, updateSpeed);
+var running = setInterval(run, updateSpeed);
 
 // draws the girdlines and other static UI elements
 function drawGridlines() {
@@ -52,11 +54,13 @@ function drawGridlines() {
                                                   .attr("stroke-width", 2);
     }
     // draw some UI things as well
+    // generations counter
     svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 40)
                                .attr("font-size", 20)
                                .attr("id", "gen_counter")
                                .text("Generations: 0");
+    // pause button
     svgContainer.append("rect").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 63)
                                .attr("width", 100)
@@ -72,12 +76,12 @@ function drawGridlines() {
                                .attr("id", "pause_button")
                                .text("Pause")
                                .on("click", pause);
+    // update speed
     svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 120)
                                .attr("font-size", 20)
                                .attr("id", "update_label")
-                               .text("Update Speed (ms)")
-                               .on("click", pause);
+                               .text("Update Speed (ms)");
     svgContainer.append("foreignObject").attr("x", 40 + GRID_SIZE * 10)
                                         .attr("y", 130)
                                         .attr("width", 100)
@@ -95,7 +99,8 @@ function drawGrid() {
                                                          .attr("y", 10 + i * 10)
                                                          .attr("width", 10)
                                                          .attr("height", 10)
-                                                         .attr("fill", "hsl(240,100%," + (100 - 50 * grid[i][j]) + "%)");
+                                                         .attr("fill", "hsl(240,100%," + (100 - 50 * grid[i][j]) + "%)")
+                                                         .on("click", function(){cellClicked(this);});
         }
     }
 }
@@ -103,18 +108,19 @@ function drawGrid() {
 // updates existing gridcells
 function redrawGrid() { 
     // update the color of each cell
-    svgContainer.select("#bottom").selectAll("rect").each(
-        function () {
-            this.setAttribute("fill", "hsl(240,100%," + 
-            (100 - 50 * grid[this.getAttribute("y") / 10 - 1][this.getAttribute("x") / 10 - 1]) + "%)");
-        });
+    svgContainer.select("#bottom").selectAll("rect").each(colorGridCell);
         
     svgContainer.select("#gen_counter").text("Generations: " + generations);
 }
 
+function colorGridCell() {
+    this.setAttribute("fill", "hsl(240,100%," + 
+    (100 - 50 * grid[this.getAttribute("y") / 10 - 1][this.getAttribute("x") / 10 - 1]) + "%)");
+}
+
 // calculates the next generation and updates grid
 function nextGeneration() {
-    nextGrid = [];
+    var nextGrid = [];
     for (var i = 0; i < GRID_SIZE; i++) {
         temp = []
         for (var j = 0; j < GRID_SIZE; j++) {
@@ -129,7 +135,7 @@ function nextGeneration() {
 // determines what a specific gridcell should be in the next generation
 function calculateLife(y, x) {
     // count how many alive neighbours
-    neighbours = 0;
+    var neighbours = 0;
     for (var i = -1; i < 2; i++) {
         if (y+i < 0 || y+i >= GRID_SIZE) {
             continue;
@@ -148,7 +154,7 @@ function calculateLife(y, x) {
     }
 }
 
-// update the grid every 1 second
+// calculate the next generation then update the grid
 function run() {
     nextGeneration();
     redrawGrid();
@@ -180,6 +186,27 @@ function setUpdateTime(timeStep) {
         pause();
     }
 }
+
+function cellClicked(gridCell) {
+    // only allow interaction with grid while paused
+    if (running === null) {
+        // find which cell was clicked
+        var x = gridCell.getAttribute("x") / 10 - 1;
+        var y = gridCell.getAttribute("y") / 10 - 1;
+        
+        // change its state
+        var state = grid[y][x];
+        grid[y][x] = !state;
+        
+        // recolor it
+        colorGridCell.call(gridCell);
+    }
+}
+
+
+
+
+
 
 
 
