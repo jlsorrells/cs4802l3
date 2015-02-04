@@ -113,6 +113,7 @@ function redrawGrid() {
     svgContainer.select("#gen_counter").text("Generations: " + generations);
 }
 
+// colors a grid cell, blue if alive, white if dead
 function colorGridCell() {
     this.setAttribute("fill", "hsl(240,100%," + 
     (100 - 50 * grid[this.getAttribute("y") / 10 - 1][this.getAttribute("x") / 10 - 1]) + "%)");
@@ -160,6 +161,7 @@ function run() {
     redrawGrid();
 }
 
+// pause or unpause the simulation
 function pause() {
     if (running !== null) {
         clearInterval(running);
