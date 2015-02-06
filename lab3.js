@@ -5,6 +5,8 @@ var GRID_SIZE = 50;
 var grid = [];
 var updateSpeed = 1000;
 var generations = 0;
+var pop = [];
+var graphContainer;
 
 // rules for cell life/death
 // live if 2 or 3 neighbours, die otherwise
@@ -54,6 +56,8 @@ function drawGridlines() {
                                                   .attr("stroke-width", 2);
     }
     // draw some UI things as well
+    // population graph
+    drawGraph();
     // generations counter
     svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 40)
@@ -119,6 +123,8 @@ function drawGrid() {
                                                          .on("click", function(){cellClicked(this);});
         }
     }
+    
+    updateGraph();
 }
 
 // updates existing gridcells
@@ -127,6 +133,8 @@ function redrawGrid() {
     svgContainer.select("#bottom").selectAll("rect").each(colorGridCell);
         
     svgContainer.select("#gen_counter").text("Generations: " + generations);
+    
+    updateGraph();
 }
 
 // colors a grid cell, blue if alive, white if dead
@@ -203,6 +211,7 @@ function clear() {
         }
     }
     generations = 0;
+    pop = [];
     
     // redraw it
     redrawGrid();
@@ -239,6 +248,74 @@ function cellClicked(gridCell) {
     }
 }
 
+function drawGraph() {
+    var width = 350;
+    var height = 250;
+    
+    // convert format of data
+    var gen = 0;
+    var data = pop.map(function(d) {
+        return {
+            generation: gen++,
+            population: d
+        };
+    });
+
+    var x = d3.scale.linear().range([0, width]);
+    var y = d3.scale.linear().range([height, 0]);
+    var xAxis = d3.svg.axis().scale(x)
+                             .orient("bottom");
+    var yAxis = d3.svg.axis().scale(y)
+                             .orient("left");
+
+    var line = d3.svg.line().x(function(d) { return x(d.generation); })
+                            .y(function(d) { return y(d.population); });
+
+    x.domain(d3.extent(data, function(d) { return d.generation; }));
+    y.domain([0, d3.max(data, function(d) { return d.population; })]);
+    
+    d3.select("#graph").remove();
+
+    graphContainer = svgContainer.append("g").attr("id", "graph")
+                            .attr("transform", "translate(600, 250)");
+    
+    graphContainer.append("g").attr("id", "x axis")
+                              .attr("transform", "translate(0," + height + ")")
+                              .call(xAxis)
+                              .append("text")
+                              .attr("x", 340)
+                              .attr("dy", "-.71em")
+                              .style("text-anchor", "end")
+                              .text("Generation");
+
+    graphContainer.append("g").attr("id", "y axis")
+                              .call(yAxis)
+                              .append("text")
+                              .attr("transform", "rotate(-90)")
+                              .attr("y", 6)
+                              .attr("dy", ".71em")
+                              .style("text-anchor", "end")
+                              .text("Population");
+
+    graphContainer.append("path").datum(data)
+                                 .attr("id", "line")
+                                 .attr("d", line)
+                                 .attr("fill", "none")
+                                 .attr("stroke", "blue")
+                                 .attr("stroke-width", 3);
+}
+
+function updateGraph() {
+    var currentPop = 0;
+    for (var i = 0; i < GRID_SIZE; i++) {
+        for (var j = 0; j < GRID_SIZE; j++) {
+            currentPop += grid[i][j];
+        }
+    }
+    pop.push(currentPop);
+    
+    drawGraph();
+}
 
 
 

@@ -1,6 +1,8 @@
 start of lab 3, forked from my assignment 1  
 view output at http://jlsorrells.github.io/cs4802l3/  
 
+graph code modified from http://bl.ocks.org/mbostock/3883245 
+
 currently supported interactions:
  - Button to pause/unpause simulation
  - Input box to control speed of simulation
