@@ -76,14 +76,30 @@ function drawGridlines() {
                                .attr("id", "pause_button")
                                .text("Pause")
                                .on("click", pause);
-    // update speed
+    // clear button
+    svgContainer.append("rect").attr("x", 40 + GRID_SIZE * 10)
+                               .attr("y", 103)
+                               .attr("width", 100)
+                               .attr("height", 22)
+                               .attr("id", "clear_rect")
+                               .attr("fill", "hsl(0,0%,80%")
+                               .attr("stroke", "black")
+                               .attr("stroke-width", 2)
+                               .on("click", clear);
     svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
                                .attr("y", 120)
+                               .attr("font-size", 20)
+                               .attr("id", "clear_button")
+                               .text("Clear grid")
+                               .on("click", clear);
+    // update speed
+    svgContainer.append("text").attr("x", 40 + GRID_SIZE * 10)
+                               .attr("y", 160)
                                .attr("font-size", 20)
                                .attr("id", "update_label")
                                .text("Update Speed (ms)");
     svgContainer.append("foreignObject").attr("x", 40 + GRID_SIZE * 10)
-                                        .attr("y", 130)
+                                        .attr("y", 170)
                                         .attr("width", 100)
                                         .attr("height", 25)
                                         .html("<input type=\"number\" min=\"0\" max=\"2000\" step=\"10\" value=\"500\" id=\"updateSpeedBox\" oninput=\"setUpdateTime(this.value)\">");
@@ -172,6 +188,24 @@ function pause() {
         running = setInterval(run, updateSpeed);
         svgContainer.select("#pause_button").text("Pause");
     }
+}
+
+// clear the grid
+function clear() {
+    // pause before we clear the grid
+    if (running !== null) {
+        pause();
+    } 
+    // clear the grid
+    for (var i = 0; i < GRID_SIZE; i++) {
+        for (var j = 0; j < GRID_SIZE; j++) {
+            grid[i][j] = false;
+        }
+    }
+    generations = 0;
+    
+    // redraw it
+    redrawGrid();
 }
 
 function setUpdateTime(timeStep) {
